@@ -3,6 +3,7 @@
 #include "GasManager.h"
 #include "MenuRenderer.h"
 #include "SleepTimer.h"
+#include "RangeSet.h"
 #include "DataLogger.h"
 #include "TimeSync.h"
 #include "DataSource.h"
@@ -77,7 +78,7 @@ public:
 
     void action()
     {
-        //m_gasManager->selectGasByIndex(m_gasIndex);
+       //m_gasManager->selectGasByIndex(m_gasIndex);
     }
 
 };
@@ -102,8 +103,34 @@ public:
     {
         m_sleepTimer->selectIntervalByIndex(m_intervalIndex);
     }
+};
+
+
+
+class RangeMenuItem : public Menu
+{
+    Range* m_range;
+
+    int m_rangeIndex;
+
+public:
+
+    RangeMenuItem(String name, String parentName, int rangeIndex, Range* range, MenuRenderer* renderer)
+            : Menu(name, parentName, renderer),
+              m_range(range),
+              m_rangeIndex(rangeIndex)
+    {
+
+    }
+
+    void action()
+    {
+        m_range->selectRangeByIndex(m_rangeIndex);
+    }
 
 };
+
+
 
 class DataLoggerFlashStoreMenuItem : public Menu
 {

@@ -1,3 +1,15 @@
+/*
+ * Release Log
+ * Save the selected gas index to the EEPROM memory. 3/4/2023
+ * Range Selection Added but not implemented in the calculation. 2/28/2023
+ * Bluetooth Datalogging added and implemented.
+ */
+
+ /* Parts List:
+  * Huzzah32
+  * ADS1115
+  */
+
 #include <Adafruit_ADS1015.h>
 #include <SSD1306.h>
 #include <U8g2lib.h>
@@ -12,9 +24,13 @@
 #include "inc/MenuRenderer.h"
 #include "inc/WebServer.h"
 #include "inc/SleepTimer.h"
+#include "inc/RangeSet.h"
 #include "inc/Globals.h"
 #include "inc/DataLogger.h"
 #include "inc/DataSource.h"
+
+
+
 
 using namespace std;
 
@@ -29,9 +45,8 @@ using namespace std;
 #define wifi_ssid "22CDPro"
 #define wifi_password "00525508"
 
-//BluetoothSerial SerialBT;
 
-GasManager g_gasManager(1.73231201, -2.054456771, 1, 0, 0);
+GasManager g_gasManager(1.73231201, -2.054456771, 1, 0, 0,0,0,0,0,0,0);
 
 WebServer g_webServer;
 
@@ -43,6 +58,10 @@ Adafruit_ADS1115 ads1115;
 //SSD1306 display(0x3c, 23, 22);
 #endif
 
+#ifdef USE_SSD1327_DISPLAY
+//U8G2_SSD1327_MIDAS_128X128_F_4W_SW_SPI display(U8G2_R0, /* clock=*/ 27, /* data=*/ 26, /* cs=*/ 25, /* dc=*/ 33, /* reset=*/ 32);
+#endif
+
 //Display Setting - TFT
 #include <SPI.h>
 
@@ -52,11 +71,9 @@ TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
 
 //End of Display Setting - TFT
 
-#ifdef USE_SSD1327_DISPLAY
-//U8G2_SSD1327_MIDAS_128X128_F_4W_SW_SPI display(U8G2_R0, /* clock=*/ 27, /* data=*/ 26, /* cs=*/ 25, /* dc=*/ 33, /* reset=*/ 32);
-#endif
-
 SleepTimer g_sleepTimer;
+
+Range g_range;
 
 DataLogger g_dataLogger;
 
@@ -83,12 +100,12 @@ void IRAM_ATTR dummyTouchISR() {}
 
 void setup() {
   Serial.begin(115200);
-
+  Serial.println("PID M30 v230304");
   // DEEP-SLEEP init
   pinMode(25, OUTPUT);
 
-  Serial.println("The device started, now you can pair it with bluetooth!");
 
+  //esp_sleep_enable_ext1_wakeup(0x8004, ESP_EXT1_WAKEUP_ANY_HIGH);
   esp_sleep_enable_ext0_wakeup(GPIO_NUM_12, LOW);
   // ADC
   ads1115.begin();
@@ -121,6 +138,8 @@ void setup() {
   MenuRenderer* gasMenuRenderer = new SSD1306GasMenuRenderer(&display);
   MenuRenderer* runMenuRenderer = new SSD1306RunMenuRenderer(&display, dataSource, &g_gasManager);
   MenuRenderer* sleepTimerMenuRenderer = new SSD1306SleepTimerMenuRenderer(&display, &g_sleepTimer);
+  MenuRenderer* rangeMenuRenderer = new SSD1306RangeMenuRenderer(&display, &g_range);
+
   MenuRenderer* flashLoggerMenuRenderer = new SSD1306FlashLoggerMenuRenderer(&display, &g_dataLogger);
   MenuRenderer* wifiDumpMenuRenderer = new SSD1306WiFiDumpMenuRenderer(&display, &g_dataLogger);
   MenuRenderer* wifiRealTimeDumpMenuRenderer = new SSD1306WiFiRealTimeDumpMenuRenderer(&display, &g_dataLogger);
@@ -134,6 +153,20 @@ void setup() {
 
 #endif
 
+#ifdef USE_SSD1327_DISPLAY
+
+  // Display
+  display.begin();
+
+  MenuRenderer* gasMenuRenderer = new SSD1327GasMenuRenderer(&display);
+  MenuRenderer* runMenuRenderer = new SSD1327RunMenuRenderer(&display, dataSource, &g_gasManager);
+  MenuRenderer* sleepTimerMenuRenderer = new SSD1327SleepTimerMenuRenderer(&display, &g_sleepTimer);
+  MenuRenderer* flashLoggerMenuRenderer = new SSD1327FlashLoggerMenuRenderer(&display, &g_dataLogger);
+  MenuRenderer* wifiDumpMenuRenderer = new SSD1327WiFiDumpMenuRenderer(&display, &g_dataLogger);
+  MenuRenderer* wifiRealTimeDumpMenuRenderer = new SSD1327WiFiRealTimeDumpMenuRenderer(&display, &g_dataLogger);
+  MenuRenderer* NTPSyncMenuRenderer = new SSD1327NTPSyncMenuRenderer(&display, &g_timeSync);
+  MenuRenderer* showTimeMenuRenderer = new SSD1327ShowTimeMenuRenderer(&display);
+#endif
 
 #ifdef USE_TFT_DISPLAY
   tft.init();
@@ -143,6 +176,8 @@ void setup() {
   MenuRenderer* gasMenuRenderer = new TFTGasMenuRenderer(&tft);
   MenuRenderer* runMenuRenderer = new TFTRunMenuRenderer(&tft, dataSource, &g_gasManager);
   MenuRenderer* sleepTimerMenuRenderer = new TFTSleepTimerMenuRenderer(&tft, &g_sleepTimer);
+  MenuRenderer* rangeMenuRenderer = new TFTRangeMenuRenderer(&tft, &g_range);
+
   MenuRenderer* flashLoggerMenuRenderer = new TFTFlashLoggerMenuRenderer(&tft, &g_dataLogger);
   MenuRenderer* wifiDumpMenuRenderer = new TFTWiFiDumpMenuRenderer(&tft, &g_dataLogger);
   MenuRenderer* wifiRealTimeDumpMenuRenderer = new TFTWiFiRealTimeDumpMenuRenderer(&tft, &g_dataLogger);
@@ -155,6 +190,7 @@ void setup() {
   MenuRenderer* CalResMenuRenderer = new TFTCalResMenuRenderer(&tft, &g_gasManager);
 
 #endif
+
   vector<Menu*> runMenus;
 
   runMenus.push_back(new RunMenuItem("RUN", "RUN", &g_gasManager, runMenuRenderer));
@@ -163,12 +199,13 @@ void setup() {
   // Gas Menus
   vector<Menu*> gasMenus;
 
-  gasMenus.push_back(new GasMenuItem("Air", "LIBRARY",  0, &g_gasManager, gasMenuRenderer));
-  gasMenus.push_back(new GasMenuItem("O2", "LIBRARY", 1, &g_gasManager, gasMenuRenderer));
-  gasMenus.push_back(new GasMenuItem("N2", "LIBRARY", 2, &g_gasManager, gasMenuRenderer));
-  gasMenus.push_back(new GasMenuItem("He", "LIBRARY",  0, &g_gasManager, gasMenuRenderer));
-  gasMenus.push_back(new GasMenuItem("H2", "LIBRARY", 1, &g_gasManager, gasMenuRenderer));
-  gasMenus.push_back(new GasMenuItem("ArCH4", "LIBRARY", 2, &g_gasManager, gasMenuRenderer));
+  
+  gasMenus.push_back(new GasMenuItem("DET 1", "LIBRARY",  0, &g_gasManager, gasMenuRenderer));
+  gasMenus.push_back(new GasMenuItem("DET 2", "LIBRARY", 1, &g_gasManager, gasMenuRenderer));
+  gasMenus.push_back(new GasMenuItem("DET 3", "LIBRARY", 2, &g_gasManager, gasMenuRenderer));
+  gasMenus.push_back(new GasMenuItem("DET 4", "LIBRARY",  3, &g_gasManager, gasMenuRenderer));
+ // gasMenus.push_back(new GasMenuItem("DET 5", "LIBRARY", 4, &g_gasManager, gasMenuRenderer));
+//  gasMenus.push_back(new GasMenuItem("DET 6", "LIBRARY", 5, &g_gasManager, gasMenuRenderer));
 
   CompositeMenu* libraryMenu = new CompositeMenu("LIBRARY", "Main Menu" , gasMenus);
 
@@ -183,6 +220,16 @@ void setup() {
 
     CompositeMenu* timerMenu = new CompositeMenu("TIMER","Main Menu" , sleepTimerMenus);
   */
+
+
+  // Range Menus
+    vector<Menu*> rangeMenus;
+    rangeMenus.push_back(new RangeMenuItem("1000", "Range",  0, &g_range, rangeMenuRenderer));
+    rangeMenus.push_back(new RangeMenuItem("5000", "Range",  1, &g_range, rangeMenuRenderer));
+
+    CompositeMenu* rangeMenu = new CompositeMenu("Range","Main Menu" , rangeMenus);
+
+
   // DataLogger Menus
   vector<Menu*> dataLoggerMenus;
 
@@ -217,9 +264,10 @@ void setup() {
   vector<Menu*> horizontalMenus;
 
   horizontalMenus.push_back(runMenu);
-  // horizontalMenus.push_back(libraryMenu);
-  //  horizontalMenus.push_back(timerMenu);
-  //  horizontalMenus.push_back(dataLoggerMenu);
+  horizontalMenus.push_back(libraryMenu);
+  //horizontalMenus.push_back(timerMenu);
+  horizontalMenus.push_back(rangeMenu);
+  //horizontalMenus.push_back(dataLoggerMenu);
   //horizontalMenus.push_back(dateTimeMenu);
   horizontalMenus.push_back(calMenu);
   horizontalMenus.push_back(calgasMenu);
@@ -235,6 +283,7 @@ void setup() {
 
   g_webServer.init(&g_gasManager);
   //g_sleepTimer.init(&g_configurationManager);
+//  g_range.init(&g_configurationManager);
 
   g_dataLogger.init(dataSource, &g_gasManager);
 
@@ -353,7 +402,6 @@ void loop()
     tft.setTextColor(TFT_GREEN);
     tft.println("calibration");
 #endif
-
   } //END IS_CAL IF
   delay(10);
 }

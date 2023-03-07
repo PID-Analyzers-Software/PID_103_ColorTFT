@@ -62,6 +62,7 @@ public:
             if (m_readIndex >= m_numReadings) {
                 m_readIndex = 0;
             }
+            delay(50);
             // calculate the average:
             m_lastReadValue = m_total / m_numReadings;
         }

@@ -12,6 +12,7 @@ class SleepTimer;
 class DataLogger;
 class DataSource;
 class TimeSync;
+class Range;
 
 
 class MenuRenderer
@@ -23,9 +24,9 @@ public:
 
 class SSD1306MenuRenderer : public MenuRenderer
 {
-protected:
-    SSD1306Wire* 			m_display;
-	
+protected:	
+	SSD1306Wire* 			m_display;
+
 public:
 
 	SSD1306MenuRenderer(SSD1306Wire* display) : m_display(display)
@@ -50,7 +51,7 @@ public:
 class SSD1306RunMenuRenderer : public SSD1306MenuRenderer
 {
 	DataSource* 		m_dataSource;
-	GasManager*				m_gasManager;
+	GasManager*			m_gasManager;
 	
 public:
 
@@ -69,6 +70,19 @@ public:
 	
 	void render(Menu* menu);
 };
+
+class SSD1306RangeMenuRenderer : public SSD1306MenuRenderer
+{
+    Range* m_range;
+
+public:
+
+    SSD1306RangeMenuRenderer(SSD1306Wire* display, Range* range);
+
+    void render(Menu* menu);
+};
+
+
 
 class SSD1306FlashLoggerMenuRenderer : public SSD1306MenuRenderer
 {
@@ -292,10 +306,9 @@ public:
 	void render(Menu* menu);
 };
 
-//////////////
+///////////
 ////TFT
-//////////////
-
+///////////
 class TFTMenuRenderer : public MenuRenderer
 {
 protected:
@@ -325,7 +338,7 @@ public:
 class TFTRunMenuRenderer : public TFTMenuRenderer
 {
     DataSource* 		m_dataSource;
-    GasManager*				m_gasManager;
+    GasManager*			m_gasManager;
 
 public:
 
@@ -344,6 +357,19 @@ public:
 
     void render(Menu* menu);
 };
+
+class TFTRangeMenuRenderer : public TFTMenuRenderer
+{
+    Range* m_range;
+
+public:
+
+    TFTRangeMenuRenderer(TFT_eSPI* display, Range* range);
+
+    void render(Menu* menu);
+};
+
+
 
 class TFTFlashLoggerMenuRenderer : public TFTMenuRenderer
 {
@@ -445,3 +471,7 @@ public:
     TFTCalResMenuRenderer(TFT_eSPI* display, GasManager* gasManager);
     void render(Menu* menu);
 };
+
+
+
+

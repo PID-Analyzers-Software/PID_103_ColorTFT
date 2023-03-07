@@ -23,7 +23,7 @@ void TimeSync::initTimeFromRTC()
   tv_now.tv_sec = now;
   settimeofday(&tv_now, NULL);
 
-  setenv("TZ", "EST5EDT", 1);
+  //setenv("TZ", "EST5EDT", 1);
 
   struct tm timeinfo;
 
