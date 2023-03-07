@@ -537,7 +537,7 @@ TFTGasMenuRenderer::TFTGasMenuRenderer(TFT_eSPI* display) : TFTMenuRenderer(disp
 
 void TFTGasMenuRenderer::render(Menu* menu)
 {
-  m_display->fillScreen(TFT_BLACK);
+  // 
   m_display->setTextFont(2);
   m_display->setTextColor(TFT_RED);
   //  m_display->setCursor(50, 14, 4);
@@ -561,7 +561,6 @@ TFTRunMenuRenderer::TFTRunMenuRenderer(TFT_eSPI* display, DataSource* dataSource
 void TFTRunMenuRenderer::render(Menu* menu)
 {
   const float multiplier = 0.125F; //GAIN 1
-
   Gas& selectedGas = m_gasManager->getSelectedGas();
   int64_t startMicros = esp_timer_get_time();
   //date & time
@@ -577,7 +576,7 @@ void TFTRunMenuRenderer::render(Menu* menu)
 
 
   // block //
-  //m_display->fillScreen(TFT_BLACK);
+  // 
   //m_display->fillRect(0, 0, 200, 200, TFT_BLACK);
 
 
@@ -655,7 +654,7 @@ void TFTSleepTimerMenuRenderer::render(Menu* menu)
 {
 
 
-  m_display->fillScreen(TFT_BLACK);
+   
   m_display->setTextFont(2);
   m_display->setTextColor(TFT_RED);
   //  m_display->setCursor(50, 14, 4);
@@ -677,7 +676,7 @@ void TFTRangeMenuRenderer::render(Menu* menu)
 {
   int range = m_range->getSelectedRange();
 
-  m_display->fillScreen(TFT_BLACK);
+   
   m_display->setTextFont(2);
   m_display->setTextColor(TFT_RED);
   //  m_display->setCursor(50, 14, 4);
@@ -766,30 +765,6 @@ TFTShowTimeMenuRenderer::TFTShowTimeMenuRenderer(TFT_eSPI* display) : TFTMenuRen
 
 void TFTShowTimeMenuRenderer::render(Menu* menu)
 {
-  //  int64_t startMicros = esp_timer_get_time();
-  //
-  //  m_display->clear();
-  //  m_display->setColor(WHITE);
-  //  m_display->setTextAlignment(TEXT_ALIGN_CENTER);
-  //
-  //  struct tm timeinfo;
-  //  getLocalTime(&timeinfo, 10);
-  //
-  //  int64_t passed = esp_timer_get_time() - startMicros;
-  //
-  //  Serial.println("render time: " + String((uint32_t)(passed / 1000)));
-  //
-  //  char dateString[30] = { 0 };
-  //  char timeString[30] = { 0 };
-  //  strftime(dateString, 30, "%b %d %y", &timeinfo);
-  //  strftime(timeString, 30, "%H:%M:%S", &timeinfo);
-  //
-  //  m_display->drawString(64, 0, "Current DateTime");
-  //  m_display->drawLine(10, 24, 256, 24);
-  //  m_display->drawString(64, 28, String(dateString));
-  //  m_display->drawString(64, 45, String(timeString));
-  //  m_display->display();
-
 
 
   m_display->setTextFont(2);
@@ -831,7 +806,7 @@ void TFTZEROMenuRenderer::render(Menu* menu)
 {
   const float multiplier = 0.125F; //GAIN 1
   double sensor_val = m_dataSource->getDoubleValue();
-  m_display->fillScreen(TFT_BLACK);
+   
   m_display->setTextFont(2);
   m_display->setTextColor(TFT_RED);
   //  m_display->setCursor(50, 14, 4);
@@ -853,7 +828,7 @@ TFTCalGasMenuRenderer::TFTCalGasMenuRenderer(TFT_eSPI* display, DataSource* data
 }
 void TFTCalGasMenuRenderer::render(Menu* menu)
 {
-  m_display->fillScreen(TFT_BLACK);
+   
   m_display->setTextFont(2);
   m_display->setTextColor(TFT_RED);
   //  m_display->setCursor(50, 14, 4);

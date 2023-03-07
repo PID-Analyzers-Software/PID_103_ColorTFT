@@ -1,14 +1,14 @@
 /*
- * Release Log
- * Save the selected gas index to the EEPROM memory. 3/4/2023
- * Range Selection Added but not implemented in the calculation. 2/28/2023
- * Bluetooth Datalogging added and implemented.
- */
+   Release Log
+   Save the selected gas index to the EEPROM memory. 3/4/2023
+   Range Selection Added but not implemented in the calculation. 2/28/2023
+   Bluetooth Datalogging added and implemented.
+*/
 
- /* Parts List:
-  * Huzzah32
-  * ADS1115
-  */
+/* Parts List:
+   Huzzah32
+   ADS1115
+*/
 
 #include <Adafruit_ADS1015.h>
 #include <SSD1306.h>
@@ -46,7 +46,7 @@ using namespace std;
 #define wifi_password "00525508"
 
 
-GasManager g_gasManager(1.73231201, -2.054456771, 1, 0, 0,0,0,0,0,0,0);
+GasManager g_gasManager(1.73231201, -2.054456771, 1, 0, 0, 0, 0, 0, 0, 0, 0);
 
 WebServer g_webServer;
 
@@ -199,13 +199,13 @@ void setup() {
   // Gas Menus
   vector<Menu*> gasMenus;
 
-  
+
   gasMenus.push_back(new GasMenuItem("DET 1", "LIBRARY",  0, &g_gasManager, gasMenuRenderer));
   gasMenus.push_back(new GasMenuItem("DET 2", "LIBRARY", 1, &g_gasManager, gasMenuRenderer));
   gasMenus.push_back(new GasMenuItem("DET 3", "LIBRARY", 2, &g_gasManager, gasMenuRenderer));
   gasMenus.push_back(new GasMenuItem("DET 4", "LIBRARY",  3, &g_gasManager, gasMenuRenderer));
- // gasMenus.push_back(new GasMenuItem("DET 5", "LIBRARY", 4, &g_gasManager, gasMenuRenderer));
-//  gasMenus.push_back(new GasMenuItem("DET 6", "LIBRARY", 5, &g_gasManager, gasMenuRenderer));
+  // gasMenus.push_back(new GasMenuItem("DET 5", "LIBRARY", 4, &g_gasManager, gasMenuRenderer));
+  //  gasMenus.push_back(new GasMenuItem("DET 6", "LIBRARY", 5, &g_gasManager, gasMenuRenderer));
 
   CompositeMenu* libraryMenu = new CompositeMenu("LIBRARY", "Main Menu" , gasMenus);
 
@@ -223,11 +223,11 @@ void setup() {
 
 
   // Range Menus
-    vector<Menu*> rangeMenus;
-    rangeMenus.push_back(new RangeMenuItem("1000", "Range",  0, &g_range, rangeMenuRenderer));
-    rangeMenus.push_back(new RangeMenuItem("5000", "Range",  1, &g_range, rangeMenuRenderer));
+  vector<Menu*> rangeMenus;
+  rangeMenus.push_back(new RangeMenuItem("1000", "Range",  0, &g_range, rangeMenuRenderer));
+  rangeMenus.push_back(new RangeMenuItem("5000", "Range",  1, &g_range, rangeMenuRenderer));
 
-    CompositeMenu* rangeMenu = new CompositeMenu("Range","Main Menu" , rangeMenus);
+  CompositeMenu* rangeMenu = new CompositeMenu("Range", "Main Menu" , rangeMenus);
 
 
   // DataLogger Menus
@@ -283,7 +283,7 @@ void setup() {
 
   g_webServer.init(&g_gasManager);
   //g_sleepTimer.init(&g_configurationManager);
-//  g_range.init(&g_configurationManager);
+  //  g_range.init(&g_configurationManager);
 
   g_dataLogger.init(dataSource, &g_gasManager);
 
@@ -309,6 +309,7 @@ void setupButtons()
   keyboard->addOnDownPressedFctor([] {
 
     g_sleepTimer.resetIdleCounter();
+    tft.fillScreen(TFT_BLACK);
 
     if (CALIBRATION_MODE)
       return;
@@ -320,6 +321,7 @@ void setupButtons()
   keyboard->addOnSPressedFctor([] {
 
     g_sleepTimer.resetIdleCounter();
+    tft.fillScreen(TFT_BLACK);
 
     if (CALIBRATION_MODE)
       return;
@@ -329,6 +331,7 @@ void setupButtons()
   keyboard->addOnRightPressedFctor([] {
 
     g_sleepTimer.resetIdleCounter();
+    tft.fillScreen(TFT_BLACK);
 
     if (CALIBRATION_MODE)
       return;

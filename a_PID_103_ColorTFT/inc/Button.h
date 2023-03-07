@@ -181,7 +181,7 @@ public:
                 Wire.beginTransmission(0x3C);
                 Wire.write(0x80);
                 Wire.write(SSD1306_DISPLAYOFF);
-                Wire.endTransmission(); //           m_display -> display();
+                Wire.endTransmission();
 
                 delay(1000);
                 esp_deep_sleep_start();
