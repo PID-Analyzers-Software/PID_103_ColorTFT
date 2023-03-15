@@ -170,7 +170,7 @@ void setup() {
 
 #ifdef USE_TFT_DISPLAY
   tft.init();
-  tft.setRotation(2);
+  tft.setRotation(4);
   tft.fillScreen(TFT_BLACK);
 
   MenuRenderer* gasMenuRenderer = new TFTGasMenuRenderer(&tft);
