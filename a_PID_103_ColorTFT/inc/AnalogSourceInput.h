@@ -54,7 +54,7 @@ public:
             // read the sensor:
             const float multiplier = 0.125F; //GAIN 1
 
-            m_readings[m_readIndex] = m_ads1115->readADC_SingleEnded(0) * multiplier;
+            m_readings[m_readIndex] = m_ads1115->readADC_SingleEnded(1) * multiplier;
             // add value to total:
             m_total = m_total + m_readings[m_readIndex];
             // handle index
