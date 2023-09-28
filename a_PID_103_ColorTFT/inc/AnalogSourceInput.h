@@ -6,7 +6,7 @@ class AnalogSourceInput
 {
 protected:
 
-    int 			m_refreshRate = 1; //refreshes per second
+    int 			m_refreshRate = 2; //refreshes per second
     int             m_numReadings  = 1;
     int             m_readings[1];
     int             m_readIndex  = 0;
@@ -54,7 +54,7 @@ public:
             // read the sensor:
             const float multiplier = 0.125F; //GAIN 1
 
-            m_readings[m_readIndex] = m_ads1115->readADC_SingleEnded(1) * multiplier;
+            m_readings[m_readIndex] = m_ads1115->readADC_SingleEnded(0) * multiplier;
             // add value to total:
             m_total = m_total + m_readings[m_readIndex];
             // handle index

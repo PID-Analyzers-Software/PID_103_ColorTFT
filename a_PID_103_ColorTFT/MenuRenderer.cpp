@@ -537,7 +537,7 @@ TFTGasMenuRenderer::TFTGasMenuRenderer(TFT_eSPI* display) : TFTMenuRenderer(disp
 
 void TFTGasMenuRenderer::render(Menu* menu)
 {
-  // 
+  //
   m_display->setTextFont(2);
   m_display->setTextColor(TFT_RED);
   //  m_display->setCursor(50, 14, 4);
@@ -572,14 +572,6 @@ void TFTRunMenuRenderer::render(Menu* menu)
   char timeString[30] = { 0 };
   strftime(dateString, 30, "%b %d %y", &timeinfo);
   strftime(timeString, 30, "%H:%M", &timeinfo);
-
-
-
-  // block //
-  // 
-  //m_display->fillRect(0, 0, 200, 200, TFT_BLACK);
-
-
   m_display->setTextColor(TFT_BLACK); // Background is not defined so it is transparent
   m_display->setCursor (300, 5);
   m_display->setTextFont(2);        // Select font 1 which is the Adafruit GLCD font
@@ -604,8 +596,8 @@ void TFTRunMenuRenderer::render(Menu* menu)
   m_display->println("2");       // Draw text centre at position 120, 54 using font 6
   m_display->setCursor(30, 180, 4);    // Set cursor to x = 76, y = 150 and use font 4
   m_display->println("CO");       // Draw text centre at position 120, 54 using font 6
-  m_display->setCursor(30, 225, 4);    // Set cursor to x = 76, y = 150 and use font 4
-  m_display->println("NO");       // Draw text centre at position 120, 54 using font 6
+//  m_display->setCursor(30, 225, 4);    // Set cursor to x = 76, y = 150 and use font 4
+//  m_display->println("mV");       // Draw text centre at position 120, 54 using font 6
   m_display->setCursor(30, 270, 4);    // Set cursor to x = 76, y = 150 and use font 4
   m_display->println("NO");       // Draw text centre at position 120, 54 using font 6
   m_display->setCursor(105, 285, 2);    // Set cursor to x = 76, y = 150 and use font 4
@@ -614,11 +606,11 @@ void TFTRunMenuRenderer::render(Menu* menu)
   //m_display->setCursor(135, 90, 4);    // Set cursor to x = 76, y = 150 and use font 4
   m_display->setTextColor(TFT_YELLOW, TFT_BLACK);
 
-  m_display->drawRightString(String(String(m_dataSource->getRawMiliVolts() / 1000)).c_str(), 230, 90, 4);     // Draw text centre at position 120, 54 using font 6
-  m_display->drawRightString(String(String(530 + m_dataSource->getRawMiliVolts() / 100)).c_str(), 230, 135, 4);  // Draw text centre at position 120, 54 using font 6
+  m_display->drawRightString(String(String(m_dataSource->getDoubleValue())).c_str(), 230, 90, 4);     // Draw text centre at position 120, 54 using font 6
+  m_display->drawRightString(String(String(m_dataSource->getRawMiliVolts() / 100)).c_str(), 230, 135, 4);  // Draw text centre at position 120, 54 using font 6
   m_display->drawRightString(String(String(m_dataSource->getRawMiliVolts() / 100.1, 1)).c_str(), 230, 180, 4);   // Draw text centre at position 120, 54 using font 6
-  m_display->drawRightString("1.7", 230, 225, 4);      // Draw text centre at position 120, 54 using font 6
-  m_display->drawRightString("0.9", 230, 270, 4);      // Draw text centre at position 120, 54 using font 6
+  m_display->drawRightString(String(String(m_dataSource->getRawMiliVolts() / 1.0, 1)).c_str(), 230, 225, 4);      // Draw text centre at position 120, 54 using font 6
+  m_display->drawRightString(String(String(m_dataSource->getRawMiliVolts() / 10.0, 1)).c_str(), 230, 270, 4);      // Draw text centre at position 120, 54 using font 6
 
   m_display->setCursor(250, 100, 2);    // Set cursor to x = 76, y = 150 and use font 4
   m_display->println("ppm");       // Draw text centre at position 120, 54 using font 6
@@ -627,7 +619,7 @@ void TFTRunMenuRenderer::render(Menu* menu)
   m_display->setCursor(250, 190, 2);    // Set cursor to x = 76, y = 150 and use font 4
   m_display->println("ppm");       // Draw text centre at position 120, 54 using font 6
   m_display->setCursor(250, 235, 2);    // Set cursor to x = 76, y = 150 and use font 4
-  m_display->println("ppm");       // Draw text centre at position 120, 54 using font 6
+  m_display->println("mV");       // Draw text centre at position 120, 54 using font 6
   m_display->setCursor(250, 280, 2);    // Set cursor to x = 76, y = 150 and use font 4
   m_display->println("ppm");       // Draw text centre at position 120, 54 using font 6
 
@@ -654,7 +646,7 @@ void TFTSleepTimerMenuRenderer::render(Menu* menu)
 {
 
 
-   
+
   m_display->setTextFont(2);
   m_display->setTextColor(TFT_RED);
   //  m_display->setCursor(50, 14, 4);
@@ -676,7 +668,7 @@ void TFTRangeMenuRenderer::render(Menu* menu)
 {
   int range = m_range->getSelectedRange();
 
-   
+
   m_display->setTextFont(2);
   m_display->setTextColor(TFT_RED);
   //  m_display->setCursor(50, 14, 4);
@@ -804,19 +796,22 @@ TFTZEROMenuRenderer::TFTZEROMenuRenderer(TFT_eSPI* display, DataSource* dataSour
 }
 void TFTZEROMenuRenderer::render(Menu* menu)
 {
-  const float multiplier = 0.125F; //GAIN 1
+    m_display->setTextColor(TFT_BLACK); // Background is not defined so it is transparent
+
+    const float multiplier = 0.125F; //GAIN 1
   double sensor_val = m_dataSource->getDoubleValue();
-   
+
   m_display->setTextFont(2);
   m_display->setTextColor(TFT_RED);
   //  m_display->setCursor(50, 14, 4);
   m_display->drawRightString("Cal Zero", 200, 14, 4);    // Draw text centre at position 120, 54 using font 6
-  m_display->setTextColor(TFT_YELLOW);
+    m_display->setTextColor(TFT_YELLOW, TFT_BLACK);
   //  m_display->setCursor(70, 70, 4);
   m_display->drawRightString("Zero Gas: 0 ppm", 280, 100, 2);
-  m_display->drawRightString("Det: 232 mV", 280, 150, 2);
-  m_display->drawRightString("<Select>: Confirm", 280, 200, 2);
-  m_display->drawRightString("<Down>: Skip", 280, 250, 2);
+  m_display->drawRightString("Det: ", 280, 150, 2);
+  m_display->drawRightString(String(String(m_dataSource->getRawMiliVolts() / 1.0, 1)+"mV").c_str(), 280, 180, 2);      // Draw text centre at position 120, 54 using font 6
+  m_display->drawRightString("<Select>: Confirm", 280, 220, 2);
+  m_display->drawRightString("<Down>: Skip", 280, 280, 2);
 
 }
 
@@ -828,17 +823,18 @@ TFTCalGasMenuRenderer::TFTCalGasMenuRenderer(TFT_eSPI* display, DataSource* data
 }
 void TFTCalGasMenuRenderer::render(Menu* menu)
 {
-   
+
   m_display->setTextFont(2);
   m_display->setTextColor(TFT_RED);
   //  m_display->setCursor(50, 14, 4);
   m_display->drawRightString("Cal Cal", 200, 14, 4);    // Draw text centre at position 120, 54 using font 6
-  m_display->setTextColor(TFT_YELLOW);
+    m_display->setTextColor(TFT_YELLOW, TFT_BLACK);
   //  m_display->setCursor(70, 70, 4);
   m_display->drawRightString("Cal Gas: 1000 ppm", 280, 100, 2);
-  m_display->drawRightString("Det:  1443 mV", 280, 150, 2);
-  m_display->drawRightString("<Select>: Confirm", 280, 200, 2);
-  m_display->drawRightString("<Down>: Skip", 280, 250, 2);
+  m_display->drawRightString("Det:", 280, 150, 2);
+    m_display->drawRightString(String(String(m_dataSource->getRawMiliVolts() / 1.0, 1)+"mV").c_str(), 280, 180, 2);      // Draw text centre at position 120, 54 using font 6
+    m_display->drawRightString("<Select>: Confirm", 280, 220, 2);
+    m_display->drawRightString("<Down>: Skip", 280, 280, 2);
 
 }
 
