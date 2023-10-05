@@ -589,39 +589,32 @@ void TFTRunMenuRenderer::render(Menu* menu)
   m_display->println("96%");       // Draw text centre at position 120, 54 using font 6
   m_display->setTextColor(TFT_YELLOW); // Do not plot the background colour
   m_display->setCursor(30, 90, 4);    // Set cursor to x = 76, y = 150 and use font 4
-  m_display->println("PID");       // Draw text centre at position 120, 54 using font 6
+  m_display->println("A0-");       // Draw text centre at position 120, 54 using font 6
   m_display->setCursor(30, 135, 4);    // Set cursor to x = 76, y = 150 and use font 4
-  m_display->println("CO");       // Draw text centre at position 120, 54 using font 6
-  m_display->setCursor(105, 150, 2);    // Set cursor to x = 76, y = 150 and use font 4
-  m_display->println("2");       // Draw text centre at position 120, 54 using font 6
+  m_display->println("A1-");       // Draw text centre at position 120, 54 using font 6
   m_display->setCursor(30, 180, 4);    // Set cursor to x = 76, y = 150 and use font 4
-  m_display->println("CO");       // Draw text centre at position 120, 54 using font 6
-//  m_display->setCursor(30, 225, 4);    // Set cursor to x = 76, y = 150 and use font 4
-//  m_display->println("mV");       // Draw text centre at position 120, 54 using font 6
-  m_display->setCursor(30, 270, 4);    // Set cursor to x = 76, y = 150 and use font 4
-  m_display->println("NO");       // Draw text centre at position 120, 54 using font 6
-  m_display->setCursor(105, 285, 2);    // Set cursor to x = 76, y = 150 and use font 4
-  m_display->println("2");       // Draw text centre at position 120, 54 using font 6
+  m_display->println("A2-");       // Draw text centre at position 120, 54 using font 6
+  m_display->setCursor(30, 225, 4);    // Set cursor to x = 76, y = 150 and use font 4
+  m_display->println("A3-");       // Draw text centre at position 120, 54 using font 6
+
 
   //m_display->setCursor(135, 90, 4);    // Set cursor to x = 76, y = 150 and use font 4
   m_display->setTextColor(TFT_YELLOW, TFT_BLACK);
 
-  m_display->drawRightString(String(String(m_dataSource->getDoubleValue())).c_str(), 230, 90, 4);     // Draw text centre at position 120, 54 using font 6
-  m_display->drawRightString(String(String(m_dataSource->getRawMiliVolts() / 100)).c_str(), 230, 135, 4);  // Draw text centre at position 120, 54 using font 6
-  m_display->drawRightString(String(String(m_dataSource->getRawMiliVolts() / 100.1, 1)).c_str(), 230, 180, 4);   // Draw text centre at position 120, 54 using font 6
-  m_display->drawRightString(String(String(m_dataSource->getRawMiliVolts() / 1.0, 1)).c_str(), 230, 225, 4);      // Draw text centre at position 120, 54 using font 6
-  m_display->drawRightString(String(String(m_dataSource->getRawMiliVolts() / 10.0, 1)).c_str(), 230, 270, 4);      // Draw text centre at position 120, 54 using font 6
+  m_display->drawRightString(String(String(m_dataSource->getRawMiliVolts())).c_str(), 230, 135, 4);     // Draw text centre at position 120, 54 using font 6
+  m_display->drawRightString(String(String(m_dataSource->getRawMiliVolts_battery())).c_str(), 230, 225, 4);  // Draw text centre at position 120, 54 using font 6
+ // m_display->drawRightString(String(String(m_dataSource->getRawMiliVolts())).c_str(), 230, 180, 4);   // Draw text centre at position 120, 54 using font 6
+ // m_display->drawRightString(String(String(m_dataSource->getRawMiliVolts())).c_str(), 230, 225, 4);      // Draw text centre at position 120, 54 using font 6
 
   m_display->setCursor(250, 100, 2);    // Set cursor to x = 76, y = 150 and use font 4
-  m_display->println("ppm");       // Draw text centre at position 120, 54 using font 6
+  m_display->println("mV");       // Draw text centre at position 120, 54 using font 6
   m_display->setCursor(250, 145, 2);    // Set cursor to x = 76, y = 150 and use font 4
-  m_display->println("ppm");       // Draw text centre at position 120, 54 using font 6
+  m_display->println("mV");       // Draw text centre at position 120, 54 using font 6
   m_display->setCursor(250, 190, 2);    // Set cursor to x = 76, y = 150 and use font 4
-  m_display->println("ppm");       // Draw text centre at position 120, 54 using font 6
+  m_display->println("mV");       // Draw text centre at position 120, 54 using font 6
   m_display->setCursor(250, 235, 2);    // Set cursor to x = 76, y = 150 and use font 4
   m_display->println("mV");       // Draw text centre at position 120, 54 using font 6
-  m_display->setCursor(250, 280, 2);    // Set cursor to x = 76, y = 150 and use font 4
-  m_display->println("ppm");       // Draw text centre at position 120, 54 using font 6
+
 
 
   m_display->setCursor(30, 400, 2);    // Set cursor to x = 76, y = 150 and use font 4
